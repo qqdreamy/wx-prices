@@ -1,0 +1,23 @@
+<view class="page">
+    <view class="page__hd">
+        <view class="page__title">产品报价</view>
+        <view class="page__desc"></view>
+    </view>
+    <view class="page__bd">
+      <view class="weui-grids">
+        <navigator url="../baojia/baojia" class="weui-grid" hover-class="weui-grid_active">
+          <image class="weui-grid__icon" src="../../assets/box.png" />
+          <view class="weui-grid__label">天地盖</view>
+        </navigator>
+        <navigator url="../bag/bag" class="weui-grid" hover-class="weui-grid_active">
+          <image class="weui-grid__icon" src="../../assets/bag.png" />
+          <view class="weui-grid__label">手提袋</view>
+        </navigator>
+        <navigator url="../ColorBox/DrawerBox" class="weui-grid" hover-class="weui-grid_active">
+          <image class="weui-grid__icon" src="../../assets/colorbox.png" />
+          <view class="weui-grid__label">彩盒</view>
+        </navigator>
+      </view>
+      
+    </view>
+</view>

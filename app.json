@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/baojia/baojia",
+    "pages/baojia/baojiaMsg",
+    "pages/bag/bag",
+    "pages/ColorBox/DrawerBox"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "报价",
+        "iconPath": "assets/price.png",
+        "selectedIconPath":"assets/price_1.png"
+      },
+      {
+        "pagePath": "pages/logs/logs",
+        "text": "工具",
+        "iconPath": "assets/tool.png",
+        "selectedIconPath": "assets/tool_1.png"
+      }
+    ]
+  }
+}

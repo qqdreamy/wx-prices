@@ -1,0 +1,47 @@
+{
+	"description": "项目配置文件。",
+	"setting": {
+		"urlCheck": true,
+		"es6": true,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"libVersion": "1.6.0",
+	"appid": "wxc40f318c5a3c3de4",
+	"projectname": "%E6%8A%A5%E4%BB%B7%E7%B3%BB%E7%BB%9F",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": 0,
+			"list": [
+				{
+					"id": -1,
+					"name": "baojia",
+					"pathName": "pages/baojia/baojia",
+					"query": ""
+				},
+				{
+					"id": 1,
+					"name": "bag",
+					"pathName": "pages/bag/bag",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "caihe",
+					"pathName": "pages/ColorBox/DrawerBox",
+					"query": ""
+				}
+			]
+		}
+	}
+}
