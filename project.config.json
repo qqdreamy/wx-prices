@@ -8,7 +8,7 @@
 		"newFeature": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "1.6.0",
+	"libVersion": "1.6.6",
 	"appid": "wxc40f318c5a3c3de4",
 	"projectname": "%E6%8A%A5%E4%BB%B7%E7%B3%BB%E7%BB%9F",
 	"condition": {
@@ -21,12 +21,12 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": -1,
 			"list": [
 				{
 					"id": -1,
 					"name": "baojia",
-					"pathName": "pages/baojia/baojia",
+					"pathName": "pages/TopBox/baojia",
 					"query": ""
 				},
 				{

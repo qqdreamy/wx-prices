@@ -2,7 +2,7 @@
   "pages": [
     "pages/index/index",
     "pages/logs/logs",
-    "pages/baojia/baojia",
+    "pages/TopBox/baojia",
     "pages/baojia/baojiaMsg",
     "pages/bag/bag",
     "pages/ColorBox/DrawerBox"

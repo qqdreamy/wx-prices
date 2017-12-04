@@ -19,7 +19,7 @@ Page({
     cardboardsIndex:0,
     bottomCardboardsIndex:0,
     papersIndex: 0,
-    paperWeights:["100g","128g","157g"],
+    paperWeights: [{ id: 128, name: '128g' }, { id: 157, name: '157g' }],
     paperWeightsIndex:0,
     prints: ["四色","单色","专色","无需印刷"],
     print:0,
@@ -31,15 +31,26 @@ Page({
     wide:100,
     height:50,
     curling:15,
+    topFilm:true,
     ispaper:true,
     isCardboard:true,
-    isBCardboard:false,
+    isBCardboard:true,
     boxPrice: {
       count: 0, 
       process:0,
+      topPaper:0,
+      bottomPaper:0,
       topCardboard:0,
+      topPrint:0,
+      topFilm:0,
       bottomCardboard:0
     }
+  },
+  onShow:function(){
+    // 重新显示界面-启用报价按钮
+    this.setData({
+      loading: false
+    })
   },
   onLoad: function () {
     var that = this;
@@ -58,23 +69,38 @@ Page({
       activeIndex: e.currentTarget.id
     });
   },
+  // 纸板盖盒-展开长
   ExpandTopLong:function(e){
     return Number(this.data.long)+this.data.height*2
   },
+  // 纸板盖盒-展开宽
   ExpandTopWide:function(e){
     return Number(this.data.wide)+this.data.height*2
   },
+  // 纸板底盒-展开长
   ExpandBottomLong: function (e) {
-    //return Number(this.long) - Number(this.thick * 2) - this.bottomBack + Number(this.height - this.BottomThick) * 2;
     return Number(this.data.long * this.data.thicks[this.data.thicksIndex].id-2+(this.data.height-3)*2);
   },
+  // 纸板底盒-展开宽
   ExpandBottomWide: function (e) {
-    //return Number(this.wide)-Number(this.thick*2)-this.bottomBack+Number(this.height-this.BottomThick)*2;
     return Number(this.data.wide - this.data.thicks[this.data.thicksIndex].id * 2 - 3 + (this.data.height - 3) * 2);
+  },
+  // 包纸盖-展开长
+  ExpandTopColorsurfaceLong:function(e){
+    return Number(Number(this.data.long) + Number(this.data.height * 2) + Number(this.data.thicks[this.data.thicksIndex].id * 2 + this.data.curling * 2 + 1));
+  },
+  // 包纸盖-展开宽
+  ExpandTopColorsurfaceWide:function(e){
+    return Number(Number(this.data.wide) + Number(this.data.height * 2) + Number(this.data.thicks[this.data.thicksIndex].id * 2 + this.data.curling * 2 + 1));
   },
   bindPapersChange: function (e) {
     this.setData({
       papersIndex: e.detail.value
+    })
+  },
+  topFilmChange:function(e){
+    this.setData({
+      topFilm:e.detail.value
     })
   },
   bindPaperWeightsChange:function(e){
@@ -158,28 +184,57 @@ Page({
       })
     }
   },
-  CountPrice:function(e){
-    js_CountPrice.ProcessPromise('天地盖1(小)', this.data.quantitys[this.data.quantity]).then(value => {
-      this.setData({
-        'boxPrice.process':value.toFixed(2)
-      });
-    }).then(()=>{//盖-纸板
+  // @清空数据
+  clearPrice: function () {
+    for (var i in this.data.boxPrice) {
+      this.data.boxPrice[i] = 0;
+    }
+  },
+  // @计算价格
+  CountPrice: function (e) {
+    // 计算之前清空数据
+    this.clearPrice()
+    this.setData({
+      loading: true
+    })
+    // 弹出loading
+    wx.showLoading({
+      title: '正在计算ing',
+      mask:true
+    })
+    // 数量
+    let quantitys=this.data.quantitys[this.data.quantity];
+    // 根据尺寸来计算礼盒尺寸
+    let boxName = this.long < 250 ? '天地盖1(小)' : this.long > 350 ? '天地盖1(大)' : '天地盖1(中)';
+    // 
+    js_CountPrice.getPrices().then(()=>{
+    }).then(()=>{
+      // 盖纸板报价
       if (this.data.isCardboard){
-        return js_CountPrice.CardboardPromise(this.ExpandTopLong(), this.ExpandTopWide(), this.data.cardboards[this.data.cardboardsIndex], this.data.thicks[this.data.thicksIndex].id, true).then(value => {
-          this.setData({
-            'boxPrice.topCardboard':value.toFixed(2)
-          });
-        }).then(()=>{//底-纸板
-          console.log(this.ExpandBottomLong());
-          return js_CountPrice.CardboardPromise(this.ExpandBottomLong(), this.ExpandBottomWide(), this.data.cardboards[this.data.bottomCardboardsIndex], this.data.thicks[this.data.bottomThicksIndex].id, true).then(value => {
-            this.setData({
-              'boxPrice.bottomCardboard': value.toFixed(2)
-            });
-          })
-        });
+          this.data.boxPrice.topCardboard = js_CountPrice.CardboardPromise(this.ExpandTopLong(), this.ExpandTopWide(), this.data.cardboards[this.data.cardboardsIndex], this.data.thicks[this.data.thicksIndex].id, true);
+          // 底纸板是否同盖纸板要求
+        if (!this.data.isBCardboard){
+          this.data.boxPrice.bottomCardboard = js_CountPrice.CardboardPromise(this.ExpandBottomLong(), this.ExpandBottomWide(), this.data.cardboards[this.data.bottomCardboardsIndex], this.data.thicks[this.data.bottomThicksIndex].id, true);
+        }
       }
-    }).then(() => {//最后步骤计算总价
-      this.setData({//初始化count值
+      // 礼盒加工费
+      this.data.boxPrice.process = js_CountPrice.ProcessPromise(boxName, quantitys);
+      if (this.data.ispaper){
+        // 盖-包纸报价
+        this.data.boxPrice.topPaper = js_CountPrice.ColorSurfacePromise(this.ExpandTopColorsurfaceLong(), this.ExpandTopColorsurfaceWide(), this.data.papers[this.data.papersIndex], this.data.paperWeights[this.data.paperWeightsIndex].id)*2;
+        if(this.data.print!=3){
+          // 盖-印刷报价
+          this.data.boxPrice.topPrint = js_CountPrice.PrintPromise(this.ExpandTopColorsurfaceLong(), this.ExpandTopColorsurfaceWide(), quantitys, this.data.print);
+        }
+        if(this.data.topFilm){
+          // 盖-覆膜价格计算
+          this.data.boxPrice.topFilm = js_CountPrice.FilmPromise(this.ExpandTopColorsurfaceLong(), this.ExpandTopColorsurfaceWide(), quantitys);
+        }
+      }
+    }).then(() => {
+      // @最后步骤计算总价
+      // 初始化count值
+      this.setData({
         'boxPrice.count': 0
       });
       for (var i in this.data.boxPrice) {
@@ -187,7 +242,11 @@ Page({
       }
       this.data.boxPrice.count = (this.data.boxPrice.count * 1.3).toFixed(2);
       wx.navigateTo({
-        url: 'baojiaMsg?price='+this.data.boxPrice.count
+        url: '../baojia/baojiaMsg?price=' + this.data.boxPrice.count,
+        complete: function(){
+          //隐藏正在加载
+          wx.hideLoading()
+        }
       })
     })
   }

@@ -95,8 +95,8 @@
                 <view class="weui-label">克重</view>
               </view>
               <view class="weui-cell__bd">
-                <picker bindchange="bindPaperWeightsChange" value="{{paperWeightsIndex}}" range="{{paperWeights}}">
-                  <view class="weui-select weui-select_in-select-after">{{paperWeights[paperWeightsIndex]}}</view>
+                <picker bindchange="bindPaperWeightsChange" value="{{paperWeightsIndex}}" range-key="name" range="{{paperWeights}}">
+                  <view class="weui-select weui-select_in-select-after">{{paperWeights[paperWeightsIndex].name}}</view>
                 </picker>
               </view>
             </view>
@@ -113,7 +113,7 @@
             <view wx:if="{{ispaper}}" class="weui-cell weui-cell_switch">
               <view class="weui-cell__bd">覆膜</view>
               <view class="weui-cell__ft">
-                <switch checked bindchange="filmChange" />
+                <switch checked bindchange="topFilmChange" />
               </view>
             </view>
           </view>
@@ -148,34 +148,32 @@
             <view hidden="{{!isCardboard}}" class="weui-cell weui-cell_switch">
               <view class="weui-cell__bd">同盖</view>
               <view class="weui-cell__ft">
-                <switch bindchange="isBCardboardChange" />
+                <switch checked bindchange="isBCardboardChange" />
               </view>
             </view>
-            <block hidden="{{!isCardboard}}">
-              <view hidden="{{isBCardboard}}" class="weui-cell weui-cell_select">
+              <view hidden="{{!isCardboard || isBCardboard}}"  class="weui-cell weui-cell_select">
                 <view class="weui-cell__hd weui-cell__hd_in-select-after">
                   <view class="weui-label">底-纸板</view>
                 </view>
-                <view class="weui-cell__bd">
+                <view  class="weui-cell__bd">
                   <picker bindchange="bottomCardboardsChange" value="{{bottomCardboardsIndex}}" range="{{cardboards}}">
                     <view class="weui-select weui-select_in-select-after">{{cardboards[bottomCardboardsIndex]}}</view>
                   </picker>
                 </view>
               </view>
-              <view hidden="{{isBCardboard}}" class="weui-cell weui-cell_select">
+              <view hidden="{{!isCardboard || isBCardboard}}"  class="weui-cell weui-cell_select">
                 <view class="weui-cell__hd weui-cell__hd_in-select-after">
                   <view class="weui-label">厚度</view>
                 </view>
-                <view class="weui-cell__bd">
+                <view  class="weui-cell__bd">
                   <picker bindchange="bottomThicksChange" value="{{bottomThicksIndex}}" range-key="name" range="{{thicks}}">
                     <view class="weui-select weui-select_in-select-after">{{thicks[bottomThicksIndex].name}}</view>
                   </picker>
                 </view>
               </view>
-            </block>
           </view>
           <view class="page__bd page__bd_spacing">
-            <button bindtap="CountPrice" class="weui-btn" type="primary">报价</button>
+            <button bindtap="CountPrice" class="weui-btn" disabled="{{loading}}" loading="{{loading}}" type="primary">报价</button>
           </view>
         </view>
       </view>

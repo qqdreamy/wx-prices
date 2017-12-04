@@ -27,8 +27,8 @@ Page({
       process: 0,
       paper: 0,
       print: 0,
-      film:0,
-      rope:0
+      film: 0,
+      rope: 0
     }
   },
   longInput: function (e) {
@@ -46,49 +46,52 @@ Page({
       height: e.detail.value
     })
   },
-  paperPriceInput: function (e) {//自设纸价格
+  // @自设纸价格
+  paperPriceInput: function (e) {
     this.setData({
       paperPrice: e.detail.value
     })
   },
-  //数量选择
+  // @数量选择
   quantityChange: function (e) {
     this.setData({
       quantity: e.detail.value
     })
   },
-  //纸张选择
+  // @纸张选择
   bindPapersChange: function (e) {
     this.setData({
       papersIndex: e.detail.value
     })
   },
-  //克重选择
+  // @克重选择
   bindPaperWeightsChange: function (e) {
     this.setData({
       paperWeightsIndex: e.detail.value
     })
   },
-  //印刷选择
+  // @印刷选择
   printChange: function (e) {
     this.setData({
       print: e.detail.value
     })
   },
-  //覆膜选择
+  // @覆膜选择
   filmChange: function (e) {
     this.setData({
       film: e.detail.value
     })
   },
-  //烫金选择
+  // @烫金选择
   permedChange:function(e){
     this.setData({
       permed:e.detail.value
     })
   },
-  ExpandLong: function (e) { //计算手提袋展开尺寸
-    const MaxLog = 930;//最大单粘尺寸
+  // @计算手提袋展开尺寸
+  ExpandLong: function (e) { 
+    // 最大单粘尺寸
+    const MaxLog = 930;
     if (this.data.long * 2 + this.wide * 2 + 20 > MaxLog) {
       this.setData({
         bagType: 2
@@ -101,76 +104,71 @@ Page({
       return this.data.long * 2 + this.data.wide * 2 + 20;
     }
   },
-  ExpandWide: function (e) {//计算手提袋展开尺寸
+  // @计算手提袋展开尺寸
+  ExpandWide: function (e) {
     return Number(this.data.height) + 40 + (this.data.wide / 2 + 15);
   },
-  clearPrice: function () {//清空数据
-    for (var i in this.data.boxPrice) {
-      this.data.boxPrice[i] = 0;
-    }
-  },
-  CountPrice: function (e) {
-    this.clearPrice()//计算之前清空数据
+  // @显示loading,并禁用报价按钮
+  showloading: function () {
+    // 弹出loading
     wx.showLoading({
       title: '正在计算ing',
     })
-    js_CountPrice.KaHePromise(this.ExpandLong(), this.ExpandWide(), this.data.quantitys[this.data.quantity]).then(value=>{
-      return value;
-    }).then(kahe=>{
-      return js_CountPrice.ProcessPromise('手提袋' + this.data.bagType, this.data.quantitys[this.data.quantity]).then(value => {
-        this.setData({
-          'boxPrice.process': (value+kahe).toFixed(2)
-        });
-      });
-    }).then(() => {//纸张
-      if (this.data.papersIndex== 3) {//自设纸判断
-        let value= js_CountPrice.ColorSurfacePromise(this.ExpandLong(), this.ExpandWide(), this.data.papers[this.data.papersIndex], this.data.paperWeights[this.data.paperWeightsIndex].id, this.data.paperPrice);
+    // 禁用报价按钮
+    this.setData({
+      loading: true
+    })
+  },
+  // @报价计算
+  CountPrice: function (e) {
+    // 显示loading,并禁用报价按钮
+    this.showloading()
+    let quantitys = this.data.quantitys[this.data.quantity];
+    js_CountPrice.getPrices().then(() => {
+      // 获取卡合价格
+      let kahe=js_CountPrice.KaHePromise(this.ExpandLong(), this.ExpandWide(), quantitys);
+      // 获取加工费
+      this.data.boxPrice.process=js_CountPrice.ProcessPromise('手提袋' + this.data.bagType, quantitys)+kahe;
+      // 纸张价格
+      let pPaper // 用于纸张价格计算
+      if (this.data.papersIndex == 3){// 自设纸判断
+        pPaper=this.data.boxPrice.paper = js_CountPrice.ColorSurfacePromise(this.ExpandLong(), this.ExpandWide(), this.data.papers[this.data.papersIndex], this.data.paperWeights[this.data.paperWeightsIndex].id, this.data.paperPrice)
+      }else{// 非自设纸
+        pPaper=js_CountPrice.ColorSurfacePromise(this.ExpandLong(), this.ExpandWide(), this.data.papers[this.data.papersIndex], this.data.paperWeights[this.data.paperWeightsIndex].id)
+      }
+      // 根据单粘/双粘计算纸张价格
+      if (this.data.bagType == 2) {
+        this.data.boxPrice.paper = (pPaper * 2).toFixed(2);
+      } else {
+        this.data.boxPrice.paper = pPaper.toFixed(2);
+      }
+      // 印刷费用
+      if(this.data.print != 3){
+        let p=js_CountPrice.PrintPromise(this.ExpandLong(), this.ExpandWide(), quantitys, this.data.print);
         if (this.data.bagType == 2) {
-          this.data.boxPrice.paper = (value * 2).toFixed(2);
+          this.data.boxPrice.print = (p * 2).toFixed(2);
         } else {
-          this.data.boxPrice.paper = value.toFixed(2);
+          this.data.boxPrice.print = p.toFixed(2);
         }
-      } else {//非自设纸
-        return js_CountPrice.ColorSurfacePromise(this.ExpandLong(), this.ExpandWide(), this.data.papers[this.data.papersIndex], this.data.paperWeights[this.data.paperWeightsIndex].id).then(value => {
-          if (this.data.bagType == 2) {
-            this.data.boxPrice.paper = (value * 2).toFixed(2);
-          } else {
-            this.data.boxPrice.paper = value.toFixed(2);
-          }
-        })
       }
-    }).then(() => {//印刷
-      if (this.data.print != 3) {
-        return js_CountPrice.PrintPromise(this.ExpandLong(), this.ExpandWide(), this.data.quantitys[this.data.quantity], this.data.print).then(value => {
-          if (this.data.bagType == 2) {
-            this.data.boxPrice.print = (value * 2).toFixed(2);
-          } else {
-            this.data.boxPrice.print = value.toFixed(2);
-          }
-        })
+      // 覆膜费用
+      if(this.data.film){
+        let p=js_CountPrice.FilmPromise(this.ExpandLong(), this.ExpandWide(), quantitys);
+        if (this.data.bagType == 2) {
+          this.data.boxPrice.film = (p * 2).toFixed(2);
+        } else {
+          this.data.boxPrice.film = p.toFixed(2);
+        }
       }
-    }).then(() => {//覆膜
-      if (this.data.film){
-        return js_CountPrice.FilmPromise(this.ExpandLong(), this.ExpandWide(), this.data.quantitys[this.data.quantity]).then(value => {
-          if (this.data.bagType == 2) {
-            this.data.boxPrice.film = (value * 2).toFixed(2);
-          } else {
-            this.data.boxPrice.film = value.toFixed(2);
-          }
-        })
+      // 烫金费用
+      if(this.data.permed){
+        this.data.boxPrice.permed=js_CountPrice.PermedPromise('1', quantitys);
       }
-    }).then(() => {//烫金
-      if (this.data.permed){
-        return js_CountPrice.PermedPromise('1', this.data.quantitys[this.data.quantity]).then(value=>{
-          this.data.boxPrice.permed=value.toFixed(2);
-        })
-      }
-    }).then(() => {//提绳
-      return js_CountPrice.RopePromise(this.data.ropes[this.data.ropesIndex]).then(value=>{
-        this.data.boxPrice.rope=value.toFixed(2);
-      })
-    }).then(() => {//最后步骤计算总价
-      this.setData({//初始化count值
+      // 提绳
+      this.data.boxPrice.rope=js_CountPrice.RopePromise(this.data.ropes[this.data.ropesIndex]);
+    }).then(() => {// 最后步骤计算总价
+      // 初始化count值
+      this.setData({
         'boxPrice.count': 0
       });
       for (var i in this.data.boxPrice) {
@@ -201,7 +199,14 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    // 清空上次报价数据
+    for (var i in this.data.boxPrice) {
+      this.data.boxPrice[i] = 0;
+    }
+    // 启用报价按钮
+    this.setData({
+      loading: false
+    })
   },
 
   /**

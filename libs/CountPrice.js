@@ -11,6 +11,32 @@ const mythick = {
   '2.5': 1450,
   '3': 1750
 }
+let Cardboard=[]
+let Process = []
+let Papers=[]
+let Prints=[]
+let FinishPrints=[]
+let Ropes=[]
+// @根据key查询指定数组
+function findCardbord(element) {
+  return element.name === this;
+}
+// @获取最新报价
+module.exports.getPrices=function(){
+  return new Promise((resolve, reject) => {
+    let query = new AV.Query('Prices');
+    query.first().then(results => {
+      //获取最新价格
+      Cardboard=results.get("Cardboards");
+      Process=results.get("Process");
+      Papers=results.get("Papers");
+      Prints=results.get("Prints");
+      FinishPrints = results.get("FinishPrints");
+      Ropes=results.get("Ropes");
+      resolve();
+    });
+  });
+}
 //拼板算法
 module.exports.MakeUp = function (long, wide, quantity) {
   let printQuantity = quantity;
@@ -24,38 +50,20 @@ module.exports.MakeUp = function (long, wide, quantity) {
 //印刷费
 //2017-02-17加入拼板算法
 module.exports.PrintPromise = function (clong, cwide, quantity, pType) {
-  return new Promise((resolve, reject) => {
-    let query = new AV.Query('Prints');
-    let long = Number(clong);
-    let wide = Number(cwide);
-    query.select(['price', 'addPrice']);
-    console.log(long);
-    console.log(wide);
-    let printQuantity = this.MakeUp(long, wide, quantity);
-    console.log('printQuantity:' + printQuantity);
-    let printKB = long > 870 ? '全开' : long > 580 ? '对开' : '四开';
-    let pName = pType == 0 ? '四色印刷' : pType == 2 ? '专色印刷' : '单色印刷';
-    query.startsWith('name', pName + '-' + printKB);
-    query.first().then(results => {
-      let p = results.get('price');
-      let addPrice = results.get('addPrice');
-      p = Number(p) + Number(printQuantity - 1000 > 0 ? addPrice * (printQuantity - 1000) : 0);
-      resolve(p / quantity);
-    })
-  })
+  let long = Number(clong);
+  let wide = Number(cwide);
+  let printQuantity = this.MakeUp(long, wide, quantity);
+  let printKB = long > 870 ? '全开' : long > 580 ? '对开' : '四开';
+  let pName = pType == 0 ? '四色印刷' : pType == 2 ? '专色印刷' : '单色印刷';
+  let p = Prints.find(findCardbord, pName+"-"+printKB).price;
+  let addPrice = Prints.find(findCardbord, pName + "-" + printKB).addPrice;
+  let pr = (Number(p) + Number(printQuantity - 1000 > 0 ? addPrice * (printQuantity - 1000) : 0));
+  return (pr/quantity);
 }
 //计算加工费
 module.exports.ProcessPromise = function (name, quantity) {
-  return new Promise(function (resolve, reject) {
-    let query = new AV.Query('Process');
-    query.select([quantity, 'startPrice']);
-    query.startsWith('name', name);
-    query.first().then(results => {
-      resolve(results.get(quantity) == "undefined" ? results.get('startPrice') : results.get(quantity));
-    }).catch(error => {
-      console.log(error);
-    })
-  })
+  let price = Process.find(findCardbord, name);
+  return price[quantity] == "undefined" ? price.startPrice : price[quantity];
 }
 //瓦楞片(内托)
 module.exports.CorrugatedPromise = function (long, wide, name) {
@@ -140,19 +148,12 @@ module.exports.CardboardPromise = function (long, wide, CardboardName, thick, cu
     //let kbName=kb>25 ? '49k' : kb>10 ? '24k' : kb>5 ? '9k' : kb>2 ? '4k' : '9k';
     //cuttPrice=boxJson[thick][kbName];
   }
-  return new Promise(function (resolve, reject) {
-    let query = new AV.Query('Cardboards');
-    query.select(['Name', 'Price']);
-    query.startsWith('Name', CardboardName);
-    let dKB = SizeCount.KbCountBig(1, long, wide).count;
-    let zKB = SizeCount.KbCountBig(0, long, wide).count;
-    query.first().then(results => {
-      let tonPrice = results.get('Price');
-      let zPrice = (tonPrice / 2327 * mthick / 500) + cuttPrice;//计算单张价格
-      let dPrice = (tonPrice / 1884 * mthick / 500) + cuttPrice;
-      resolve((dPrice / dKB > zPrice / zKB ? zPrice / zKB : dPrice / dKB));
-    })
-  });
+  let tonPrice = Cardboard.find(findCardbord,CardboardName).price;
+  let dKB = SizeCount.KbCountBig(1, long, wide).count;
+  let zKB = SizeCount.KbCountBig(0, long, wide).count;
+  let zPrice = (tonPrice / 2327 * mthick / 500) + cuttPrice;//计算单张价格
+  let dPrice = (tonPrice / 1884 * mthick / 500) + cuttPrice;
+  return (dPrice / dKB > zPrice / zKB ? zPrice / zKB : dPrice / dKB);
 }
 //计算纸板价格-公式2//返回纸板总价-方便核对纸板开料价格
 module.exports.CheckCardboard = function (long, wide, tonPrice, thick, quantity, cutt) {
@@ -177,8 +178,6 @@ module.exports.CheckCardboard = function (long, wide, tonPrice, thick, quantity,
   let zKB = SizeCount.KbCountBig(0, long, wide).count;
   var zPrice = (tonPrice / 2327 * mthick / 500) + cuttPrice;//计算单张价格
   var dPrice = (tonPrice / 1884 * mthick / 500) + cuttPrice;
-  console.log('zPrice' + zPrice);
-  console.log('dPrice' + dPrice)
   Price.z = Math.ceil(quantity / zKB) * zPrice;
   Price.d = Math.ceil(quantity / dKB) * dPrice;
   return Price;
@@ -188,42 +187,25 @@ module.exports.ColorSurfacePromise = function (long, wide, paper, paperWeight, p
   let dKB = SizeCount.KbCountBig(1, long, wide).count;
   let zKB = SizeCount.KbCountBig(0, long, wide).count;
   if (typeof (price) != "undefined" && price != 0) {
-    //console.log(price / zKB);
     return price / zKB;
   } else {
-    return new Promise(function (resolve, reject) {
-      let query = new AV.Query('CopperplatePapers');
-      query.select(['price']);
-      query.startsWith('name', paper);
-      query.first().then(results => {
-        let tonPrice = results.get('price');
-        let zPrice = (tonPrice / 2327 * paperWeight / 500);//计算单张价格
-        let dPrice = (tonPrice / 1884 * paperWeight / 500);
-        resolve((dPrice / dKB > zPrice / zKB ? zPrice / zKB : dPrice / dKB));
-      })
-    }).catch(() => {
-
-    })
+    let tonPrice = Papers.find(findCardbord, paper).price;
+    let zPrice = (tonPrice / 2327 * paperWeight / 500);//计算单张价格
+    let dPrice = (tonPrice / 1884 * paperWeight / 500);
+    console.log(long);
+    console.log(dPrice / dKB > zPrice / zKB ? zPrice / zKB : dPrice / dKB);
+    return dPrice / dKB > zPrice / zKB ? zPrice / zKB : dPrice / dKB
   }
 }
 //卡合
 module.exports.KaHePromise = function (clong, cwide, quantity) {
-  return new Promise((resolve, reject) => {
-    let query = new AV.Query('FinishPrints');
-    let long = Number(clong);
-    let wide = Number(cwide);
-    query.select(['price', 'addPrice']);
-    query.startsWith('name', '卡合');
-    let printQuantity = this.MakeUp(long, wide, quantity);
-    console.log(printQuantity);
-    console.log('test' + printQuantity);
-    query.first().then(results => {
-      let p = results.get('price');
-      let addPrice = results.get('addPrice');
-      p = p + Number(printQuantity - 1000 > 0 ? addPrice * (printQuantity - 1000) : 0);
-      resolve(p / quantity);
-    })
-  })
+  let long = Number(clong);
+  let wide = Number(cwide);
+  let p = FinishPrints.find(findCardbord,"卡合").price;
+  let addPrice = FinishPrints.find(findCardbord, "卡合").addPrice;
+  let printQuantity = this.MakeUp(long, wide, quantity);
+  p = p + Number(printQuantity - 1000 > 0 ? addPrice * (printQuantity - 1000) : 0);
+  return (p/quantity);
 }
 //粘盒
 module.exports.StickyBox = function (quantity) {
@@ -240,17 +222,11 @@ module.exports.StickyBox = function (quantity) {
 }
 //覆膜
 module.exports.FilmPromise = function (long, wide, quantity) {
-  return new Promise((resolve, reject) => {
-    let query = new AV.Query('FinishPrints');
-    query.select(['price', 'addPrice']);
-    query.startsWith('name', '覆膜');
-    query.first().then(results => {
-      let Square = long / 1000 * wide / 1000;
-      let addPrice = results.get('addPrice');
-      let price = results.get('price');
-      resolve(Square * addPrice * quantity > price ? Square * addPrice : price / quantity);
-    });
-  });
+  //计算覆膜平方
+  let Square = long / 1000 * wide / 1000;
+  let price = FinishPrints.find(findCardbord, "覆膜").price;
+  let addPrice = FinishPrints.find(findCardbord, "覆膜").addPrice;
+  return Square * addPrice * quantity > price ? Square * addPrice : price / quantity;
 }
 //切纸费
 module.exports.cutt = function (long, wide, thick) {
@@ -267,31 +243,16 @@ module.exports.Carton = function (long, wide, height) {
   const p = 7;
   return p / SizeCount.carton(clong, cwide, cheight, long, wide, height);
 }
-//烫金
+// @烫金
 module.exports.PermedPromise = function (type, quantity) {
-  return new Promise((resolve, reject) => {
-    let query = new AV.Query('FinishPrints');
-    query.select(['price', 'addPrice']);
-    query.startsWith('name', '烫金');
-    query.first().then(results => {
-      let p = results.get('price');
-      let addPrice = results.get('addPrice');
-      p = p + Number(quantity - 1000 > 0 ? addPrice * (quantity - 1000) : 0);
-      resolve(p / quantity * type);
-    })
-  });
+  let p = FinishPrints.find(findCardbord, "烫金").price;
+  let addPrice = FinishPrints.find(findCardbord, "烫金").addPrice;
+  p = p + Number(quantity - 1000 > 0 ? addPrice * (quantity - 1000) : 0);
+  return (p/quantity*type);
 }
-//提绳
+// @提绳
 module.exports.RopePromise = function (type) {
-  return new Promise((resolve, reject) => {
-    let query = new AV.Query('ropes');
-    query.select(['price']);
-    //console.log(type);
-    query.startsWith('name', type);
-    query.first().then(results => {
-      resolve(results.get('price'));
-    })
-  })
+  return Ropes.find(findCardbord, type).price;
 }
 //UV
 module.exports.UVPromise = function (long, wide, quantity) {
@@ -306,11 +267,5 @@ module.exports.UVPromise = function (long, wide, quantity) {
       let singlePrice = results.get('singlePrice');
       resolve(Square * addPrice * quantity > p ? Square * addPrice < singlePrice ? singlePrice : Square * addPrice : p / quantity);
     })
-    /*ref.child('印后').once('value').then(snapshot=>{
-      let boxJson=snapshot.val();
-      let p=boxJson['UV'].price;
-      let Square=long/1000*wide/1000;
-      resolve(Square*boxJson['UV'].addPrice*quantity > boxJson['UV'].price ? Square*boxJson['UV'].addPrice<boxJson['UV'].singlePrice ? boxJson['UV'].singlePrice : Square*boxJson['UV'].addPrice : boxJson['UV'].price/quantity)
-    })*/
   })
 }

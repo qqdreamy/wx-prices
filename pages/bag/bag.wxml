@@ -96,6 +96,6 @@
     </view>
   </view>
   <view class="page__bd page__bd_spacing">
-    <button bindtap="CountPrice" class="weui-btn" type="primary">报价</button>
+    <button bindtap="CountPrice" class="weui-btn" disabled="{{loading}}" loading="{{loading}}" type="primary">报价</button>
   </view>
 </view>
