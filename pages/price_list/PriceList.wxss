@@ -1,0 +1,5 @@
+/* pages/price_list/PriceList.wxss */
+
+.weui-form-preview{
+  margin-top: 20rpx;
+}

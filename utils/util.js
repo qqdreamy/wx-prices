@@ -15,7 +15,12 @@ function formatNumber(n) {
   n = n.toString()
   return n[1] ? n : '0' + n
 }
+// 根据纸张获取应使用的纸张克重
+function getPaperWeights(paperName) {
+  return paperName = 0 ? 157 : 120;
+}
 
 module.exports = {
-  formatTime: formatTime
+  formatTime: formatTime,
+  getPaperWeights: getPaperWeights
 }

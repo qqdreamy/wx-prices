@@ -1,10 +1,11 @@
 const AV = require('./av-weapp-min.js');
 const SizeCount=require('./SizeCount.js');
+const PriceList = require('../model/PriceList');
 // LeanCloud 应用的 ID 和 Key
-AV.init({
+/*AV.init({
   appId: 'cjtOItWI6rsyCzjvJCh9iSMH-gzGzoHsz',
   appKey: '5uIGW67Gq2wbEnLaD7IlVUHu',
-});
+});*/
 const mythick = {
   '2': 1150,
   '1.5': 850,
@@ -37,10 +38,28 @@ module.exports.getPrices=function(){
     });
   });
 }
-//拼板算法
+// @将报价信息写入PriceList
+module.exports.savePriceList = function (name,size, quantities, technology, price){
+  return new Promise(function (resolve, reject) {
+    new PriceList({
+      name: name,
+      size: size,
+      quantities: Number(quantities),
+      technology: technology,
+      price: price,
+      user: AV.User.current()
+    }).save().then(todo => {
+      resolve(todo.id);
+    },error=>{
+      console.log(error);
+    })
+  });
+}
+// 拼板算法
 module.exports.MakeUp = function (long, wide, quantity) {
   let printQuantity = quantity;
-  if (Math.floor(590 / (long + 6)) >= Math.floor(440 / (wide + 6)) && Math.floor(590 / (long + 6)) != 0) {//4K尺寸可拼多个进行拼板算法
+  // 4K尺寸可拼多个进行拼板算法
+  if (Math.floor(590 / (long + 6)) >= Math.floor(440 / (wide + 6)) && Math.floor(590 / (long + 6)) != 0 && Math.floor(440 / (wide + 10)) !=0) {
     printQuantity = quantity / (Math.floor(440 / (wide + 6)) * Math.floor(590 / (long + 6)));
   } else if (long < 590) {
     printQuantity = quantity / Math.floor(590 / (long + 6));
@@ -53,7 +72,8 @@ module.exports.PrintPromise = function (clong, cwide, quantity, pType) {
   let long = Number(clong);
   let wide = Number(cwide);
   let printQuantity = this.MakeUp(long, wide, quantity);
-  let printKB = long > 870 ? '全开' : long > 580 ? '对开' : '四开';
+  console.log("printQuantity"+printQuantity);
+  let printKB = long > 880 ? '全开' : long > 590 ? '对开' : '四开';
   let pName = pType == 0 ? '四色印刷' : pType == 2 ? '专色印刷' : '单色印刷';
   let p = Prints.find(findCardbord, pName+"-"+printKB).price;
   let addPrice = Prints.find(findCardbord, pName + "-" + printKB).addPrice;
@@ -193,7 +213,8 @@ module.exports.ColorSurfacePromise = function (long, wide, paper, paperWeight, p
     let zPrice = (tonPrice / 2327 * paperWeight / 500);//计算单张价格
     let dPrice = (tonPrice / 1884 * paperWeight / 500);
     console.log(long);
-    console.log(dPrice / dKB > zPrice / zKB ? zPrice / zKB : dPrice / dKB);
+    console.log(wide);
+    //console.log(dPrice / dKB > zPrice / zKB ? zPrice / zKB : dPrice / dKB);
     return dPrice / dKB > zPrice / zKB ? zPrice / zKB : dPrice / dKB
   }
 }

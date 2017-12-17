@@ -5,7 +5,11 @@
     "pages/TopBox/baojia",
     "pages/baojia/baojiaMsg",
     "pages/bag/bag",
-    "pages/ColorBox/DrawerBox"
+    "pages/ColorBox/DrawerBox",
+    "pages/my/my",
+    "pages/price_list/PriceList",
+    "pages/bindPhone/bindPhone",
+    "pages/bindPhone/phoneCode"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -19,13 +23,13 @@
         "pagePath": "pages/index/index",
         "text": "报价",
         "iconPath": "assets/price.png",
-        "selectedIconPath":"assets/price_1.png"
+        "selectedIconPath": "assets/price_1.png"
       },
       {
-        "pagePath": "pages/logs/logs",
-        "text": "工具",
-        "iconPath": "assets/tool.png",
-        "selectedIconPath": "assets/tool_1.png"
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "assets/people.png",
+        "selectedIconPath": "assets/people_1.png"
       }
     ]
   }

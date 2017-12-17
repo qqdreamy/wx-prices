@@ -10,7 +10,7 @@ icon {
   margin-top: 1.17647059em;
   background-color: #FFFFFF;
   line-height: 1.41176471;
-  font-size: 17px;
+  font-size: 15px;
 }
 .weui-cells:before {
   content: " ";
@@ -41,7 +41,7 @@ icon {
   font-size: 14px;
 }
 .weui-cells_after-title {
-  margin-top: 0;
+  margin-top: 10px;
 }
 .weui-cells__tips {
   margin-top: .3em;
@@ -647,8 +647,8 @@ icon {
 }
 .weui-grid__icon {
   display: block;
-  width: 28px;
-  height: 28px;
+  width: 56px;
+  height: 56px;
   margin: 0 auto;
 }
 .weui-grid__label {

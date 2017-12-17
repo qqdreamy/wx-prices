@@ -1,0 +1,17 @@
+/* pages/bindPhone/bind.wxss */
+.userinfo-avatar {
+  border-radius: 128rpx;
+  width: 128rpx;
+  height: 128rpx;
+}
+.page__hd {
+  background-color: #1296db;
+}
+.page__desc {
+  color: white;
+  font-size: 32rpx;
+  height: 40px;
+}
+.page__bd{
+  margin-top: 20px;
+}

@@ -1,0 +1,20 @@
+<!--pages/bindPhone/bind.wxml-->
+<view class="page">
+  <view class="page__hd">
+    <view class="page__title">
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" style="margin-top: 20px;"></image>
+    </view>
+    <view class="page__desc">{{userInfo.nickName}}</view>
+    <view class="page__desc">绑定手机号,解锁全部报价功能</view>
+  </view>
+  <view class="weui-cells weui-cells_after-title">
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__bd">
+        <input bindblur="bindPhone" type="number" class="weui-input" placeholder="手机号" auto-focus/>
+      </view>
+    </view>
+  </view>
+  <view class="page__bd page__bd_spacing">
+  <button bindtap="nextCode" class="weui-btn" type="primary">下一步</button>
+  </view>
+</view>

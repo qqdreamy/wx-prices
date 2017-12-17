@@ -1,11 +1,16 @@
+<!--pages/price_list/PriceList.wxml-->
 <view class="page">
-  <view class="weui-msg">
-    <view class="page__bd">
+  <view class="page__hd">
+    <view class="page__title">报价列表</view>
+    <view class="page__desc"></view>
+  </view>
+  <view class="page__bd">
+    <block wx:for="{{priceLists}}" wx:for-item="priceList" wx:key="objectId">
       <view class="weui-form-preview">
         <view class="weui-form-preview__hd">
           <view class="weui-form-preview__item">
             <view class="weui-form-preview__label">报价</view>
-            <view class="weui-form-preview__value_in-hd">¥{{price}}</view>
+            <view class="weui-form-preview__value_in-hd">¥{{priceList.price}}</view>
           </view>
         </view>
         <view class="weui-form-preview__bd">
@@ -19,23 +24,17 @@
           </view>
           <view class="weui-form-preview__item">
             <view class="weui-form-preview__label">工艺</view>
-            <view wx:if="{{priceList.name=='手提袋'}}" class="weui-form-preview__value">{{priceList.technology}}</view>
-            <block wx:else>
+            <block wx:if="{{priceList.name=='天地盖'}}">
               <view class="weui-form-preview__value">盖:{{priceList.technology.top}}</view>
               <view class="weui-form-preview__value">底:{{priceList.technology.bottom}}</view>
             </block>
+              <view wx:if="{{priceList.name=='手提袋'}}" class="weui-form-preview__value">{{priceList.technology}}</view>
           </view>
         </view>
         <view class="weui-form-preview__ft">
-          <view bindtap="navigateBack" class="weui-form-preview__btn weui-form-preview__btn_default" hover-class="weui-form-preview__btn_active">
-            修改报价
-          </view>
-          <view bindtap="savePriceList" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">保存至我的报价单</view>
+
         </view>
       </view>
-    </view>
-    <view class="text-box" scroll-y="true">
-      <text>此价格仅供参考具体报价以联系业务员为准</text>
-    </view>
+    </block>
   </view>
 </view>

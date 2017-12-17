@@ -1,0 +1,53 @@
+<!--pages/my/my.wxml-->
+<view class="page">
+  <view class="page__hd">
+    <view class="page__title">
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" style="margin-top: 20px;"></image>
+    </view>
+      <view class="page__desc">{{userInfo.nickName}}</view>
+  </view>
+  <view wx:if="{{!userInfo.mobilePhoneVerified}}" class="weui-cells weui-cells_after-title">
+    <navigator url="../bindPhone/bindPhone" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+      <view class="weui-cell__hd">
+        <image src="../../assets/price_list.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+      </view>
+      <view class="weui-cell__bd">绑定手机号码</view>
+      <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+    </navigator>
+  </view>
+  <view class="weui-cells weui-cells_after-title">
+    <navigator url="../price_list/PriceList" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+      <view class="weui-cell__hd">
+        <image src="../../assets/price_list.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+      </view>
+      <view class="weui-cell__bd">我的报价</view>
+      <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+    </navigator>
+  </view>
+  <view  class="weui-cells weui-cells_after-title">
+    <view class="weui-cell">
+      <view class="weui-cell__bd">联系销售,了解详情</view>
+    </view>
+    <view bindtap="callPhone" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+      <view class="weui-cell__hd">
+        <image src="{{icon}}" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+      </view>
+      <view class="weui-cell__bd">刘经理:180-0862-0099</view>
+      <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+    </view>
+    <view class="weui-cell weui-cell_access" bindtap="goOffice">
+      <view class="weui-cell__hd">
+        <image src="../../assets/address.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+      </view>
+      <view class="weui-cell__bd">门市:武汉市江汉区莱特市场15栋B06</view>
+      <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+    </view>
+    <view class="weui-cell weui-cell_access" bindtap="goFactory">
+      <view class="weui-cell__hd">
+        <image src="../../assets/address.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+      </view>
+      <view class="weui-cell__bd">工厂:武汉市东西湖区银潭路8号正兴工业园</view>
+      <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+    </view>
+  </view>
+</view>

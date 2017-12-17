@@ -47,16 +47,6 @@
                 </picker>
               </view>
             </view>
-            <view class="weui-cell weui-cell_select">
-              <view class="weui-cell__hd weui-cell__hd_in-select-after">
-                <view class="weui-label">成品工艺</view>
-              </view>
-              <view class="weui-cell__bd">
-                <picker bindchange="techniqueChange" value="{{technique}}" range="{{techniques}}">
-                  <view class="weui-select weui-select_in-select-after">{{techniques[technique]}}</view>
-                </picker>
-              </view>
-            </view>
             <view class="weui-cell weui-cell_input">
               <view class="weui-cell__hd">
                 <view class="weui-label">卷边</view>
@@ -69,7 +59,7 @@
               </view>
             </view>
           </view>
-          <view class="weui-cells__title">盖包纸</view>
+          <view class="weui-cells__title">盖盒-包纸</view>
           <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell weui-cell_switch">
               <view class="weui-cell__bd">含包纸</view>
@@ -92,16 +82,6 @@
             </view>
             <view wx:if="{{ispaper}}" class="weui-cell weui-cell_select">
               <view class="weui-cell__hd weui-cell__hd_in-select-after">
-                <view class="weui-label">克重</view>
-              </view>
-              <view class="weui-cell__bd">
-                <picker bindchange="bindPaperWeightsChange" value="{{paperWeightsIndex}}" range-key="name" range="{{paperWeights}}">
-                  <view class="weui-select weui-select_in-select-after">{{paperWeights[paperWeightsIndex].name}}</view>
-                </picker>
-              </view>
-            </view>
-            <view wx:if="{{ispaper}}" class="weui-cell weui-cell_select">
-              <view class="weui-cell__hd weui-cell__hd_in-select-after">
                 <view class="weui-label">印刷</view>
               </view>
               <view class="weui-cell__bd">
@@ -110,21 +90,41 @@
                 </picker>
               </view>
             </view>
-            <view wx:if="{{ispaper}}" class="weui-cell weui-cell_switch">
-              <view class="weui-cell__bd">覆膜</view>
+          </view>
+          <view class="weui-cells__title">底盒-包纸</view>
+          <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell weui-cell_switch">
+              <view class="weui-cell__bd">含包纸</view>
               <view class="weui-cell__ft">
-                <switch checked bindchange="topFilmChange" />
+                <switch checked bindchange="switch2Change" />
+              </view>
+            </view>
+            <view wx:if="{{isBottomPaper}}" class="weui-cell weui-cell_select">
+              <view class="weui-cell__hd weui-cell__hd_in-select-after">
+                <view class="weui-label">纸张</view>
+              </view>
+              <view class="weui-cell__bd">
+                <picker bindchange="bindPapersChange" value="{{papersIndex}}" range="{{papers}}">
+                  <view class="weui-select weui-select_in-select-after">{{papers[papersIndex]}}</view>
+                </picker>
+              </view>
+              <view wx:if="{{papersIndex=='3'}}" class="weui-cell__bd weui-cell__bd_in-select-before">
+                <input class="weui-input" />
+              </view>
+            </view>
+            <view wx:if="{{isBottomPaper}}" class="weui-cell weui-cell_select">
+              <view class="weui-cell__hd weui-cell__hd_in-select-after">
+                <view class="weui-label">印刷</view>
+              </view>
+              <view class="weui-cell__bd">
+                <picker bindchange="bottomPrintChange" value="{{bottomPrint}}" range="{{prints}}">
+                  <view class="weui-select weui-select_in-select-after">{{prints[bottomPrint]}}</view>
+                </picker>
               </view>
             </view>
           </view>
           <view class="weui-cells__title">纸板</view>
           <view class="weui-cells weui-cells_after-title">
-            <view class="weui-cell weui-cell_switch">
-              <view class="weui-cell__bd">含纸板</view>
-              <view class="weui-cell__ft">
-                <switch checked bindchange="isCardboardChange" />
-              </view>
-            </view>
             <view hidden="{{!isCardboard}}" class="weui-cell weui-cell_select">
               <view class="weui-cell__hd weui-cell__hd_in-select-after">
                 <view class="weui-label">盖-纸板</view>
