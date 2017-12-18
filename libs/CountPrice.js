@@ -40,6 +40,7 @@ module.exports.getPrices=function(){
 }
 // @将报价信息写入PriceList
 module.exports.savePriceList = function (name,size, quantities, technology, price){
+ // console.log(JSON.stringify(technology));
   return new Promise(function (resolve, reject) {
     new PriceList({
       name: name,

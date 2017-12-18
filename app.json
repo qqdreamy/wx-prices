@@ -9,7 +9,8 @@
     "pages/my/my",
     "pages/price_list/PriceList",
     "pages/bindPhone/bindPhone",
-    "pages/bindPhone/phoneCode"
+    "pages/bindPhone/phoneCode",
+    "pages/PaperCalculate/PaperCalculate"
   ],
   "window": {
     "backgroundTextStyle": "light",

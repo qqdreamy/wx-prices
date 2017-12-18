@@ -24,7 +24,7 @@
           </view>
           <view class="weui-form-preview__item">
             <view class="weui-form-preview__label">工艺</view>
-            <block wx:if="{{priceList.name=='天地盖'}}">
+            <block wx:if="{{priceList.name=='天地盖(盖到底)'}}">
               <view class="weui-form-preview__value">盖:{{priceList.technology.top}}</view>
               <view class="weui-form-preview__value">底:{{priceList.technology.bottom}}</view>
             </block>
@@ -32,7 +32,6 @@
           </view>
         </view>
         <view class="weui-form-preview__ft">
-
         </view>
       </view>
     </block>

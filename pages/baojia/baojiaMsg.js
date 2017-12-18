@@ -18,7 +18,7 @@ Page({
   },
   // @保存至报价单
   savePriceList:function(){
-    console.log(this.data.priceList);
+    //console.log(this.data.priceList);
     // 弹出loading
     wx.showLoading({
       title: '报价保存中',

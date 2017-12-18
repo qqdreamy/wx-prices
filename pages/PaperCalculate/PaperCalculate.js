@@ -1,12 +1,11 @@
-// pages/price_list/PriceList.js
-const AV = require('../../libs/av-weapp-min.js');
+// pages/PaperCalculate/PaperCalculate.js
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    priceLists:[]
+  
   },
 
   /**
@@ -20,24 +19,7 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-    // 弹出loading
-    wx.showLoading({
-      title: '正在加载中',
-    })
-    var query = new AV.Query('PriceList');
-    query.equalTo("user", AV.Object.createWithoutData('_User', AV.User.current().id));
-    query.limit(10);
-    query.descending('createdAt');
-    query.find().then(results=> {
-      //console.log(results);
-      this.setData({
-        priceLists:results
-      })
-      // 隐藏正在loading
-      wx.hideLoading()
-    }, function (error) {
-      // 错误
-    });
+  
   },
 
   /**
