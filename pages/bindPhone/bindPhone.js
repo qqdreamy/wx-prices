@@ -22,7 +22,8 @@ Page({
   nextCode:function(){
     // 弹出loading
     wx.showLoading({
-      title: '正在提交ing',
+      title: '正在发送中',
+      mask:true
     })
     // 验证手机号码格式
     let phReg = /^1[34578]\d{9}$/; //手机号正则校验
@@ -44,7 +45,7 @@ Page({
         return user.save();
       }).then(user => {
         // 发送验证短信
-        console.log(user.getMobilePhoneNumber());
+        //console.log(user.getMobilePhoneNumber());
         AV.User.requestMobilePhoneVerify(user.getMobilePhoneNumber()).then(() => {
           // 成功
         }).catch(error => {

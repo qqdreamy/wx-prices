@@ -1,1 +1,4 @@
 /* pages/bindPhone/phoneCode.wxss */
+.page__bd_spacing{
+  margin-top: 20rpx
+}

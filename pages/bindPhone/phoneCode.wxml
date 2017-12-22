@@ -11,8 +11,11 @@
         <input class="weui-input" bindblur="bindcode" placeholder="验证码" />
       </view>
     </view>
+    
   </view>
   <view class="page__bd page__bd_spacing">
   <button class="weui-btn" bindtap="verifyCode" type="primary">下一步</button>
+  <text wx:if="{{againSend}}" bindtap="sendCode">重新发送</text>
+  <text wx:if="{{downTime}}">没有收到验证码?{{time}}s可以重新发送</text>
   </view>
 </view>

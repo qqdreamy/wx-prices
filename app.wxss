@@ -13,6 +13,7 @@ page{
 .page__bd_spacing {
     padding-left: 15px;
     padding-right: 15px;
+    text-align: center;
 }
 
 .page__ft{

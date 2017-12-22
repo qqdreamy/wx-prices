@@ -1,23 +1,22 @@
-// pages/my/my.js
+const AV = require('../../libs/av-weapp-min.js');
 
 // 获取应用事例
 let app = getApp();
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
-    userInfo:null
+    userInfo: null
   },
   // @呼叫电话
-  callPhone:function(e){
+  callPhone: function (e) {
     wx.makePhoneCall({
-      phoneNumber: '18008620099' 
+      phoneNumber: '18008620099'
     })
   },
   // @go门市地址
-  goOffice:function(e){
+  goOffice: function (e) {
     wx.openLocation({
       longitude: Number(114.249900),
       latitude: Number(30.625470),
@@ -26,7 +25,7 @@ Page({
     })
   },
   // @地图显示工厂地址
-  goFactory:function(e){
+  goFactory: function (e) {
     wx.openLocation({
       longitude: Number(114.286990),
       latitude: Number(30.673020),
@@ -42,80 +41,40 @@ Page({
       //icon:base64.icon20
       icon: "../../assets/phone.png"
     });
-    //调用应用实例的方法获取全局数据
-    console.log(app.globalData.userInfo);
+    const user = AV.User.current();
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
         hasUserInfo: true
       })
-    }else{
-      //console.log(loginReadyCallback);
-      // 防止进入该页面时appjs获取服务端数据还未成功加入callback
+      if (this.data.nickName == null) {
+        // 服务端无userInfo则获取用户信息
+        wx.getUserInfo({
+          success: res => {
+            // 将用户信息写入服务端并更新本地变量全局变量
+            user.set(res.userInfo).save().then(user => {
+              app.globalData.userInfo = user.toJSON();
+              this.setData({
+                userInfo: user.toJSON(),
+                hasUserInfo: true
+              })
+            }).catch(console.error);
+          }
+        })
+      }
+    } else {
       app.loginReadyCallback = res => {
         this.setData({
           userInfo: res.toJSON(),
           hasUserInfo: true
         })
       }
-      /*wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })*/
     }
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-    
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-  
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-  
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-  
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-  
+  onShow: function (options){
+    this.setData({
+      userInfo: app.globalData.userInfo,
+      hasUserInfo: true
+    })
   }
 })

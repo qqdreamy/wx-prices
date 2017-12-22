@@ -29,7 +29,6 @@ Page({
     query.limit(10);
     query.descending('createdAt');
     query.find().then(results=> {
-      //console.log(results);
       this.setData({
         priceLists:results
       })
