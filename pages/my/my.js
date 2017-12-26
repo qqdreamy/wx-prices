@@ -37,6 +37,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    
     this.setData({
       //icon:base64.icon20
       icon: "../../assets/phone.png"
@@ -70,6 +71,18 @@ Page({
         })
       }
     }
+    // 监听网络
+    wx.onNetworkStatusChange(res=>{
+      // 判断是否有网络连接
+      if(res.isConnected){
+        app.getUserInfo(user => {
+          this.setData({
+            userInfo: user,
+            hasUserInfo: true
+          })
+        })
+      }
+    })
   },
   onShow: function (options){
     this.setData({

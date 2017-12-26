@@ -1,0 +1,11 @@
+/* components/404.wxss */
+.error{
+   width: 100%;
+   padding-top: 300rpx;
+   text-align: center;
+}
+
+.error image{
+  width:56px;
+  height:56px;
+}

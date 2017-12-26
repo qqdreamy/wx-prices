@@ -6,7 +6,7 @@
     </view>
       <view class="page__desc">{{userInfo.nickName}}</view>
   </view>
-  <view wx:if="{{!userInfo.mobilePhoneVerified}}" class="weui-cells weui-cells_after-title">
+  <view wx:if="{{!userInfo.mobilePhoneVerified && userInfo!=null}}" class="weui-cells weui-cells_after-title">
     <navigator url="../bindPhone/bindPhone" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
       <view class="weui-cell__hd">
         <image src="../../assets/price_list.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>

@@ -27,7 +27,7 @@ Page({
     })
     // 验证手机号码格式
     let phReg = /^1[34578]\d{9}$/; //手机号正则校验
-    if (this.data.phone.length == 0){
+    if (this.data.phone == ""){
       wx.showToast({
         title: '请填写手机号',
         icon: 'success'
@@ -39,19 +39,11 @@ Page({
       })
     }else{
       // 小程序登录
-      AV.User.loginWithWeapp().then(user => {
-        // 设置并保存手机号
-        user.setMobilePhoneNumber(this.data.phone);
-        return user.save();
-      }).then(user => {
-        // 发送验证短信
-        //console.log(user.getMobilePhoneNumber());
-        AV.User.requestMobilePhoneVerify(user.getMobilePhoneNumber()).then(() => {
-          // 成功
-        }).catch(error => {
-          console.log(error);
-        })
-      }).then(() => {
+      let user = AV.User.current();
+      //AV.User.loginWithWeapp().then(user => {
+      // 设置并保存手机号,系统自动发送验证短信
+      user.setMobilePhoneNumber(this.data.phone);
+      user.save().then(user=>{
         // 隐藏loading提示
         wx.hideLoading();
         wx.redirectTo({

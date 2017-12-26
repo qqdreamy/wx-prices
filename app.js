@@ -9,41 +9,41 @@ AV.init({
 //app.js
 App({
   onLaunch: function () {
-    //wx.showLoading({
-    //  title: '正在加载中',
-    //  mask:true
-    //})
-    //调用API从本地缓存中获取数据
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-    // 调用leancloud登录接口
-    AV.User.loginWithWeapp().then(user => {
-      this.globalData.userInfo = user.toJSON();
-      console.log(this.globalData.userInfo);
-      // 测试
-      if (this.loginReadyCallback) {
-        this.loginReadyCallback(user);
-      }
-    }).catch(console.error);
-    // 已授权则直接获取用户信息
-    /*wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            success: res => {
-              // 可以将 res 发送给后台解码出 unionId
-              this.globalData.userInfo = res.userInfo
-              console.log(this.globalData.userInfo);
+    // 获取网站状态如果没有网络,不进行网络操作
+    wx.getNetworkType({
+      success: res=> {
+        var networkType = res.networkType
+        if (networkType == 'none'){
+        }else{
+          // 调用leancloud登录接口
+          AV.User.loginWithWeapp().then(user => {
+            this.globalData.userInfo = user.toJSON();
+            // 测试
+            if (this.loginReadyCallback) {
+              this.loginReadyCallback(user);
             }
-          })
+          }).catch(console.error);
         }
       }
-    })*/
-  },
-  getUserInfo: function (cb) {
+    })
 
+  },
+  // 获取用户信息并同步服务端-全局函数
+  getUserInfo: function (callback){
+    // 获取用户信息
+    const user = AV.User.current();
+    wx.getUserInfo({
+      success: res => {
+        // 将用户信息写入服务端并更新本地变量全局变量
+        user.set(res.userInfo).save().then(user => {
+          this.globalData.userInfo = user.toJSON();
+          callback(user.toJSON());
+        }).catch(console.error);
+      },
+      fail: res => {
+        console.log(res);
+      }
+    })
   },
   globalData: {
     userInfo: null

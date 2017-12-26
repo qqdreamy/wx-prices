@@ -1,10 +1,8 @@
 <!--pages/price_list/PriceList.wxml-->
+
 <view class="page">
-  <view class="page__hd">
-    <view class="page__title">报价列表</view>
-    <view class="page__desc"></view>
-  </view>
-  <view class="page__bd">
+  <network-error wx:if="{{!network}}"></network-error>
+  <view wx:if="{{network}}" class="page__bd">
     <block wx:for="{{priceLists}}" wx:for-item="priceList" wx:key="objectId">
       <view class="weui-form-preview">
         <view class="weui-form-preview__hd">

@@ -5,7 +5,7 @@
   height: 128rpx;
 }
 .page__hd {
-  background-color: #1296db;
+  background-color: #FE4C40;
 }
 .page__desc {
   color: white;
